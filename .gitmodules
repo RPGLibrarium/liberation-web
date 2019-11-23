@@ -1,0 +1,15 @@
+[submodule "src/lib/axios"]
+	path = src/lib/axios
+	url = https://github.com/axios/axios.git
+[submodule "src/lib/font-awesome"]
+	path = src/lib/font-awesome
+	url = https://github.com/FortAwesome/Font-Awesome.git
+[submodule "src/lib/mustache"]
+	path = src/lib/mustache
+	url = https://github.com/janl/mustache.js.git
+[submodule "src/lib/navigo"]
+	path = src/lib/navigo
+	url = https://github.com/krasimir/navigo.git
+[submodule "src/lib/source-sans-pro"]
+	path = src/lib/source-sans-pro
+	url = https://github.com/adobe-fonts/source-sans-pro.git
