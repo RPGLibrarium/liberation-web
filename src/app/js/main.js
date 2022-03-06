@@ -82,7 +82,7 @@ document.querySelector(':root').addEventListener('click', e=>{
   if(e.target.matches('nav a[data-pageId=login]')){
     e.preventDefault();
     console.info('You pretend to belong to us? Prove it!');
-    keycloak.login();
+    keycloak.login({scope: "account:register account:modify aristocrat:read aristocrat:modify developer"});
     return;
   }
   if(e.target.matches('nav a[data-pageId=logout]')){
