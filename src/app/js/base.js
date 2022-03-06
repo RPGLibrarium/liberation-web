@@ -92,6 +92,7 @@ function loadKeycloak(waitForStuff, thenDoStuff) {
         let scriptNode = document.createElement('script');
         scriptNode.addEventListener('error', errorEvt => {
           console.error('error loading keycloak script', errorEvt)
+          initWithoutKeycloak(waitForStuff, thenDoStuff);
         });
         scriptNode.addEventListener('load', loadEvt => {
           console.debug('keycloak script loaded!');
@@ -124,6 +125,10 @@ function initKeycloak(waitForStuff, thenDoStuff){
   .error(err => {
     console.error('failed initialising keycloak', err);
   })
+}
+
+function initWithoutKeycloak(waitForStuff, thenDoStuff){
+  waitForStuff.then(thenDoStuff);
 }
 
 function updateKeycloakState(){
@@ -188,7 +193,7 @@ function renderPage(loadData, page, args={}) {
   //loadingScreen
   root.classList.add('loading');
   // query data
-  loadData(args).then(data => {
+  loadData(args, true).then(data => {
     data = {
       _AUTHENTICATED: (keycloak || {}).authenticated || false,
       ...data,
@@ -253,3 +258,11 @@ function updateNavBar() {
 export const MAGIC = (waitForStuff, thenDoStuff)=>{
   _configPromise.then(()=>loadKeycloak(waitForStuff, thenDoStuff));
 };
+
+
+// ###################
+// UTILITY FUNCTIONS #
+// ###################
+export function nestWrap(property, fn) {
+  return (...args) => fn(...args).then(data => ({[property]: data}));
+}

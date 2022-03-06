@@ -1,19 +1,19 @@
-import {API,PAGE,ROUTER} from './base.js';
+import {API,PAGE,ROUTER, nestWrap} from './base.js';
 
 PAGE('systems', 'Systeme', 'rpg_systems_list', 'librarium');
 PAGE('system', 'System', 'rpg_system', 'librarium');
 
 ROUTER
-  .on('systems', ()=>PAGE._RENDER(loadRpgSystems,PAGE.systems))
-  .on('systems/:id', args=>PAGE._RENDER(loadRpgSystem,PAGE.system, args));
+  .on('systems', ()=>PAGE._RENDER(nestWrap('rpgsystems', loadRpgSystems), PAGE.systems))
+  .on('systems/:id', args=>PAGE._RENDER(nestWrap('rpgsystem', loadRpgSystem), PAGE.system, args));
 
-function loadRpgSystems() {
+export function loadRpgSystems() {
   return API({
       method: 'GET',
       url: '/rpgsystems',
   }).then(stuff => stuff.data);
 }
-function loadRpgSystem(args) {
+export function loadRpgSystem(args) {
   return API({
       method: 'GET',
       url: '/rpgsystems/' + encodeURIComponent(args.id),
