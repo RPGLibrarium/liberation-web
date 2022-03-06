@@ -159,7 +159,7 @@ function checkRoles(role) {
   return keycloak && keycloak.authenticated && keycloak.tokenParsed.roles && (keycloak.tokenParsed.roles.includes(role) || keycloak.tokenParsed.roles.includes('admin'));
 }
 function checkScope(scrope) {
-  return keycloak && keycloak.authenticated && keycloak.tokenParsed.scope.split(' ').includes(scope));
+  return keycloak && keycloak.authenticated && keycloak.tokenParsed.scope.split(' ').includes(scope);
 }
 
 
