@@ -167,7 +167,8 @@ export let API = null;
 _configPromise.then(()=>{
   API = axios.create({
     get baseURL() { return CONFIG.apiBaseUrl; }, // 'http://localhost:8080/v1/',
-    timeout: 1000,
+    //timeout: 1000,
+    timeout: 10000,
     responseType:'json',
   });
   //inject auth header if not already set and a token is available

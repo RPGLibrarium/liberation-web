@@ -372,6 +372,42 @@ footer .footer-right {
 }
 
 /* SPECIFI CONTENT */
+ul.linkBoxList {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0;
+  padding: 0;
+  font-size: 1.1em;
+}
+ul.linkBoxList > li {
+  display: contents;
+}
+ul.linkBoxList > li > a {
+  display: block;
+  background-color: var(--color-cd-dark-green);
+  color: var(--color-cd-light-ish);
+  padding: 0.42em 1em;
+  margin: 0.21em 0.42em;
+
+  text-decoration: none;
+}
+ul.linkBoxList > li > a:is(:hover,:focus) {
+  display: block;
+  background-color: var(--color-cd-light-green);
+}
+
+abbr.sysShortnameInline {
+  font-variant: small-caps;
+  font-size: 0.9em;
+  font-weight: 600;
+}
+abbr.sysShortnameInline::before {
+  content: '[';
+}
+abbr.sysShortnameInline::after {
+  content: ']';
+}
+
 table.systems tr[data-rpgsystemid] {
   cursor: pointer;
 }

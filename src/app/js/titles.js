@@ -6,7 +6,7 @@ PAGE('titles', 'Titel', 'titles_list', 'librarium');
 ROUTER
   .on('titles', ()=>PAGE._RENDER(nestWrap('titles', loadTitlesWithSystem), PAGE.titles));
 
-function loadTitles() {
+export function loadTitles() {
   return API({
       method: 'GET',
       url: '/titles',
