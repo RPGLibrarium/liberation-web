@@ -82,7 +82,7 @@ document.querySelector(':root').addEventListener('click', e=>{
   if(e.target.matches('nav a[data-pageId=login]')){
     e.preventDefault();
     console.info('You pretend to belong to us? Prove it!');
-    keycloak.login({scope: "account:register account:modify aristocrat:read aristocrat:modify developer"});
+    keycloak.login({scope: 'account:modify aristocrat:accounts:modify aristocrat:accounts:read aristocrat:books:modify aristocrat:books:read aristocrat:guilds:modify librarian:rpgsystems:modify librarian:titles:modify'});
     return;
   }
   if(e.target.matches('nav a[data-pageId=logout]')){

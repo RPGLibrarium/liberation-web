@@ -124,6 +124,7 @@ function initKeycloak(waitForStuff, thenDoStuff){
   })
   .error(err => {
     console.error('failed initialising keycloak', err);
+    initWithoutKeycloak(waitForStuff, thenDoStuff);
   })
 }
 
