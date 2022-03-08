@@ -10,6 +10,6 @@
 [submodule "src/lib/navigo"]
 	path = src/lib/navigo
 	url = https://github.com/krasimir/navigo.git
-[submodule "src/lib/source-sans-pro"]
-	path = src/lib/source-sans-pro
-	url = https://github.com/adobe-fonts/source-sans-pro.git
+[submodule "src/lib/source-sans"]
+	path = src/lib/source-sans
+	url = https://github.com/adobe-fonts/source-sans.git
