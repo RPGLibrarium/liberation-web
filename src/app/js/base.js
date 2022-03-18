@@ -55,7 +55,7 @@ let NAV_ACTIVE = 'librarium'; //Sane default value, is overwritten later on
 PAGES._CONDITIONALS = {
   onAuthenticated: ()=>keycloak && keycloak.authenticated,
   onNotAuthenticated: ()=> keycloak && !keycloak.authenticated,
-  onAristocrat: ()=>checkRoles('aristocrat'),
+  onAristocrat: ()=>checkScope('aristocrat:books:read')||checkScope('aristocrat:books:read'),
   onDev: ()=>checkRoles('developer'),
   onLibrarian: ()=>checkRoles('librarian'),
 }
@@ -159,7 +159,8 @@ function refreshToken() {
 function checkRoles(role) {
   return keycloak && keycloak.authenticated && keycloak.tokenParsed.roles && (keycloak.tokenParsed.roles.includes(role) || keycloak.tokenParsed.roles.includes('admin'));
 }
-function checkScope(scrope) {
+
+function checkScope(scope) {
   return keycloak && keycloak.authenticated && keycloak.tokenParsed.scope.split(' ').includes(scope);
 }
 

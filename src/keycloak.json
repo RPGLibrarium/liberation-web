@@ -1,0 +1,10 @@
+{
+  "realm": "Liberation",
+  "auth-server-url": "https://sso.rpg-librarium.de/",
+  "ssl-required": "external",
+  "resource": "liberation-frontend",
+  "public-client": true,
+  "verify-token-audience": true,
+  "use-resource-role-mappings": true,
+  "confidential-port": 0
+}

@@ -5,6 +5,7 @@ import './rpgsystems.js';
 import './guilds.js';
 import './titles.js';
 import './books.js';
+import './collection.js';
 import './aristocracy.js';
 import './profile.js';
 

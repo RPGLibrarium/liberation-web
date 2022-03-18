@@ -7,18 +7,20 @@
         <dd>{{email}}</dd>
       </div>
       <div class="row">
-        <dt>Nutername</dt>
-        <dd>{{user}}</dd>
+        <dt>UID</dt>
+        <dd>{{uid}}</dd>
       </div>
       <div class="row">
-        <dt>Rollen</dt>
-        <dd>
-          <ul>
-            {{#roles}}
-            <li>{{.}}</li>
-            {{/roles}}
-          </ul>
-        </dd>
+        <dt>Vorname</dt>
+        <dd>{{givenName}}</dd>
+      </div>
+      <div class="row">
+        <dt>Nachname</dt>
+        <dd>{{familyName}}</dd>
+      </div>
+      <div class="row">
+        <dt>Name</dt>
+        <dd>{{fullName}}</dd>
       </div>
       <div class="row">
         <dt>Scopes</dt>
@@ -29,10 +31,6 @@
             {{/scopes}}
           </ul>
         </dd>
-      </div>
-      <div class="row">
-        <dt>UID</dt>
-        <dd>{{uid}}</dd>
       </div>
     </dl>
   {{/authenticated}}

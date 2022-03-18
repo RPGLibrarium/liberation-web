@@ -23,11 +23,11 @@ function loadProfileData() {
   const token = keycloak.tokenParsed;
   return Promise.resolve({
     authenticated: true,
-    uid: token.uid,
-    name: token.name,
+    uid: token.sub,
+    givenName: token.given_name,
+    familyName: token.family_name,
+    fullName: token.name,
     email: token.email,
-    user: token.preferred_username,
-    roles: token.roles,
     scopes: token.scope.split(' '),
   });
 }

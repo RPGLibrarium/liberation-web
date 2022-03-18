@@ -1,0 +1,4 @@
+{
+  "keycloakConfigLocation": "./keycloak.json",
+  "apiBaseUrl": "https://liberation.rpg-librarium.de/v1/"
+}
