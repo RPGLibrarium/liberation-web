@@ -1,37 +1,114 @@
 const WHOOSH_DURATION = 1000;
 const execAfter = setTimeout;
 
+// ###########################
+// "(SEMI) GLOBAL" VARS INIT #
+// ###########################
+
+// some variables are used across several sections, so we should declare them on top ...
+let CONFIG = null;
+let PAGES = {};
+const ALL_PAGES = [];
+export let keycloak = null;
+
+
+// #####
+// API #
+// #####
+export const API = args => {
+  const BASE_URL = CONFIG ? CONFIG.apiBaseUrl : location.href;
+  let url = new URL(BASE_URL);
+  switch (typeof args.url) {
+    case 'undefined':
+    case 'null':
+      url = new URL(BASE_URL); break;
+    case 'object':
+      url = args.url; break;
+    case 'function':
+      url = args.url(); break;
+    default:
+      let relUrl = String(args.url);
+      // make sure /something will see our base URL as "root element"
+      if (relUrl.startsWith('/') && !relUrl.startsWith('//')) relUrl = '.' + relUrl;
+      url = new URL(relUrl, BASE_URL);
+  }
+
+  let auth = undefined;
+  if (keycloak && keycloak.authenticated){
+    auth = `Bearer ${keycloak.token}`;
+  }
+  const defaultParams = {
+    method: 'GET',
+    headers: {
+      ...(auth ? { Authorization: auth } : {}),
+    },
+    mode: 'cors',
+    credentials: 'omit',
+    cache: 'default',
+    redirect: 'follow',
+    referrer: 'Liberation Web',
+  };
+
+  let computedParams = {
+    headers: { ...defaultParams.headers, ...args.headers },
+  };
+  // compat + ease of use
+  if (args.body === undefined && typeof args.data === 'object') {
+    computedParams.body = JSON.stringify(args.data);
+    if ((args.headers||{})['Content-Type'] === undefined)
+      computedParams.headers['Content-Type'] = 'application/json';
+  }
+
+  let statusFilter = code => code >= 200 && code < 400;
+  switch (typeof args.statusFilter) {
+    case 'undefined': break;
+    case 'null':
+      statusFilter = code => true; break;
+    case 'boolean':
+      statusFilter = code => args.statusFilter; break;
+    case 'function':
+      statusFilter = args.statusFilter; break;
+    default:
+      console.warn('bad value for statusFilter', args.statusFilter)
+  }
+
+  return fetch(url, {
+    ...defaultParams,
+    ...args,
+    ...computedParams,
+  })
+    // compat ...
+    .then(r => (Object.defineProperty(r, 'data', { get: () => r.json() }),r)) // TODO: autodetect based on content-type header?
+    .then(r => statusFilter(r.status) ? r : Promise.reject({
+      response: r,
+      message: `response status code indicates a failed request: ${r.status}`,
+    }));
+};
+Object.defineProperty(API, 'API_BASE_URL', { get: () => CONFIG ? CONFIG.apiBaseUrl : undefined });
+API.get = (url, args=undefined) => API({ url, method: 'GET', ...(args||{}) });
+API.post = (url, args=undefined) => API({ url, method: 'POST', ...(args||{}) });
+API.put = (url, args=undefined) => API({ url, method: 'PUT', ...(args||{}) });
+API.delete = (url, args=undefined) => API({ url, method: 'DELETE', ...(args||{}) });
+
+
 // ########
 // CONFIG #
 // ########
 const WEB_ROOT_PATH = '..';
 const CONFIG_LOCATION = 'config.json';
-let CONFIG = null;
-let _configPromise = (()=>{
-  if (axios) return loadConfig();
-  return new Promise((accpet,reject)=>{
-    document.addEventListener('DOMContentLoaded', ()=>{
-      accept(loadConfig());
-    });
+let _configPromise = API.get(`${WEB_ROOT_PATH}/${CONFIG_LOCATION}`)
+  .then(r=>r.json())
+  .then(data => CONFIG = data)
+  .catch(e => {
+    console.error('loading config failed! ', e);
+    return Promise.reject('error loading config');
   });
-})();
-function loadConfig() {
-  return axios.get(`${WEB_ROOT_PATH}/${CONFIG_LOCATION}`)
-    .then(result => {
-      CONFIG = result.data;
-    })
-    .catch(e => {
-      console.error('loading config failed! ', e);
-      return Promise.reject('error loading config');
-    })
-}
+
 
 // #######
 // PAGES #
 // #######
 export const TEMPLATES = {};
-let PAGES = {};
-const ALL_PAGES = [];
 export const PAGE = (page, title, template, nav=undefined, conditional=undefined, onDisplay=undefined)=>{
   if(PAGES[page]) return;
   conditional = conditional || (()=>true);
@@ -60,6 +137,8 @@ PAGES._CONDITIONALS = {
   onDev: ()=>checkRoles('developer'),
   onLibrarian: ()=>checkRoles('librarian'),
 }
+
+
 // ########
 // ROUTER #
 // ########
@@ -79,14 +158,13 @@ ROUTER.notFound(()=>{
 const KC_REFRESH_INTERVAL = 5; // seconds -> how often it is checked
 const KC_REFRESH_THRESHOLD = 10; // seconds -> remaining time which causes refresh
 
-export let keycloak = null;
 let keycloakUpdateInterval = null;
 
 function loadKeycloak(waitForStuff, thenDoStuff) {
   console.debug("Loading keycloak")
   document.querySelector(':root').classList.add('loading');
   if(typeof Keycloak === 'undefined' || !Keycloak){
-    axios.get(`${WEB_ROOT_PATH}/${CONFIG.keycloakConfigLocation}`)
+    API.get(new URL(`${WEB_ROOT_PATH}/${CONFIG.keycloakConfigLocation}`, location.href))
       .then(res => res.data)
       .then(conf => {
         let scriptLocation = `${conf['auth-server-url']}/js/keycloak.js`;
@@ -164,31 +242,6 @@ function checkRoles(role) {
 function checkScope(scope) {
   return keycloak && keycloak.authenticated && keycloak.tokenParsed.scope.split(' ').includes(scope);
 }
-
-
-// #####
-// API #
-// #####
-export let API = null;
-_configPromise.then(()=>{
-  API = axios.create({
-    get baseURL() { return CONFIG.apiBaseUrl; }, // 'http://localhost:8080/v1/',
-    //timeout: 1000,
-    timeout: 10000,
-    responseType:'json',
-  });
-  //inject auth header if not already set and a token is available
-  API.interceptors.request.use (
-    config => {
-      if(!config.headers.Authorization && keycloak && keycloak.authenticated){
-        config.headers.Authorization = `Bearer ${keycloak.token}`;
-      }
-      return config;
-    },
-    error => Promise.reject(error)
-  );
-});
-
 
 // #####################
 // UI VOODOO FUNCTIONS #
