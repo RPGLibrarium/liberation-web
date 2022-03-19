@@ -32,7 +32,9 @@ function onDisplayAristocracy(pageNode){
     }})
     .then(title=>{
       console.debug('added title', title);
-      titleForm.reset();
+      //titleForm.reset();
+      titleInputs.name.value = '';
+      titleInputs.year.value = 0;
       titleMessage.classList.remove('error');
       titleMessage.classList.add('ok');
       titleMessage.innerText = 'Titel hinzugefügt!';
