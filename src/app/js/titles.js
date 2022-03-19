@@ -13,6 +13,16 @@ export function loadTitles() {
   }).then(stuff => stuff.data);
 }
 
+export function addTitle(args) {
+  return API({
+      method: 'POST',
+      url: '/titles',
+      data: args.title,
+  }).then(stuff => stuff.data);
+}
+
+//////////////
+
 function loadTitlesWithSystem() {
   return Promise.all([loadRpgSystems(), loadTitles()])
     .then(([systems, titles]) => {

@@ -32,11 +32,12 @@ function loadConfig() {
 export const TEMPLATES = {};
 let PAGES = {};
 const ALL_PAGES = [];
-export const PAGE = (page, title, template, nav=undefined, conditional=undefined)=>{
+export const PAGE = (page, title, template, nav=undefined, conditional=undefined, onDisplay=undefined)=>{
   if(PAGES[page]) return;
   conditional = conditional || (()=>true);
+  onDisplay = onDisplay || (()=>{});
 
-  let obj = {page,title,template,conditional};
+  let obj = {page,title,template,conditional,onDisplay};
   switch (typeof nav){
     case 'number': // position in navigation bar -> this is a MASTER PAGE!
       if(!Number.isSafeInteger(nav)) console.warn(`oh no! nav looks like a number, but is evil!`, nav);
@@ -221,6 +222,7 @@ function renderPage(loadData, page, args={}) {
     // update navigation bar (maybe a new item is active now‽)
     NAV_ACTIVE = navPageActive;
     updateNavBar();
+    page.onDisplay(pageElement);
     // remove old page elements after woosh animation
     execAfter(()=>oldPages.forEach(e => e.remove()), WHOOSH_DURATION);
   }).catch(e => {

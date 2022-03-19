@@ -8,54 +8,59 @@
     </code>
 </section>
 <section>
-    <h3>Neues System</h3>
-    <form method="post" id="postRpgsystem"></form>
+  <h3>Neues System</h3>
+  <form method="post" id="postRpgsystem">
     <table>
-        <tr>
-            <td><label for="fRpgName">Name</label></td>
-            <td><input type="text" id="fRpgName" name="fRpgName" form="postRpgsystem"><br></td>
-        </tr>
-        <tr>
-            <td><label for="fRpgShort">Short</label></td>
-            <td><input type="text" id="fRpgShort" name="fRpgShort" form="postRpgsystem"><br></td>
-        </tr>
-        <tr>
-            <td colspan="2"><input type="submit" value="Abschicken"></td>
-        </tr>
+      <tr>
+        <td><label for="fRpgName">Name</label></td>
+        <td><input type="text" id="fRpgName" name="fRpgName" form="postRpgsystem"><br></td>
+      </tr>
+      <tr>
+        <td><label for="fRpgShort">Short</label></td>
+        <td><input type="text" id="fRpgShort" name="fRpgShort" form="postRpgsystem"><br></td>
+      </tr>
+      <tr>
+        <td colspan="2"><input type="submit" value="Abschicken"></td>
+      </tr>
     </table>
+    <p class="message"></p>
+  </form>
 </section>
 <section>
-    <h3>Neuer Titel</h3>
-    <form method="post" id="postTitle"></form>
+  <h3>Neuer Titel</h3>
+  <form method="post" id="postTitle">
     <table>
-        <tr>
-            <td><label for="fTitleRpgsystem">System</label></td>
-            <td>
-                <!-- TODO: Nicer dropdown -->
-                <select id="fTitleRpgsystem" name="fTitleRpgsystem">
-                    <option value="1">DSA</option>
-                    <option value="2">Shadowrun</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td><label for="fTitleName">Name</label></td>
-            <td><input type="text" id="fTitleName" name="fTitleName" form="postTitle"><br></td>
-        </tr>
-        <tr>
-            <td><label for="fTitleLanguage">Sprache</label></td>
-            <td><input type="text" id="fTitleLanguage" name="fTitleLanguage" form="postTitle"><br></td>
-        </tr>
-        <tr>
-            <td><label for="fTitlePublisher">Verlach</label></td>
-            <td><input type="text" id="fTitlePublisher" name="fTitlePublisher" form="postTitle"><br></td>
-        </tr>
-        <tr>
-            <td><label for="fTitleYear">Jahr</label></td>
-            <td><input type="text" id="fTitleYear" name="fTitleYear" form="postTitle"><br></td>
-        </tr>
-        <tr>
-            <td colspan="2"><input type="submit" value="Abschicken"></td>
-        </tr>
+      <tr>
+        <td><label for="fTitleRpgsystem">System</label></td>
+        <td>
+            <!-- TODO: Nicer dropdown -->
+            <select id="fTitleRpgsystem" name="fTitleRpgsystem">
+              {{#rpgsystems}}
+                <option value="{{id}}">{{#shortname}}[{{.}}] {{/shortname}}{{name}}</option>
+              {{/rpgsystems}}
+            </select>
+        </td>
+      </tr>
+      <tr>
+        <td><label for="fTitleName">Name</label></td>
+        <td><input type="text" id="fTitleName" name="fTitleName" form="postTitle"><br></td>
+      </tr>
+      <tr>
+        <td><label for="fTitleLanguage">Sprache</label></td>
+        <td><input type="text" id="fTitleLanguage" name="fTitleLanguage" form="postTitle"><br></td>
+      </tr>
+      <tr>
+        <td><label for="fTitlePublisher">Verlach</label></td>
+        <td><input type="text" id="fTitlePublisher" name="fTitlePublisher" form="postTitle"><br></td>
+      </tr>
+      <tr>
+        <td><label for="fTitleYear">Jahr</label></td>
+        <td><input type="number" id="fTitleYear" name="fTitleYear" form="postTitle"><br></td>
+      </tr>
+      <tr>
+        <td colspan="2"><input type="submit" value="Abschicken"></td>
+      </tr>
     </table>
+    <p class="message"></p>
+  </form>
 </section>

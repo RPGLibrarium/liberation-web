@@ -444,3 +444,10 @@ dl.profileDetails.vTab > .row {
 dl.profileDetails.vTab > .row > * {
   display: table-cell;
 }
+
+form:is(#postRpgsystem,#postTitle) table+.message.ok {
+  color: var(--color-cd-dark-green);
+}
+form:is(#postRpgsystem,#postTitle) table+.message.error {
+  color: #c00;
+}
