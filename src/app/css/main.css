@@ -228,6 +228,10 @@ body section:first-of-type table:first-of-type::before {
   opacity: counter(fist-tables);
 }
 
+body section + section {
+  margin-top: 2.1em;
+}
+
 /* FOOTER */
 footer {
   flex-shrink: 0;
@@ -445,9 +449,24 @@ dl.profileDetails.vTab > .row > * {
   display: table-cell;
 }
 
-form:is(#postRpgsystem,#postTitle) table+.message.ok {
+form:is(#addBook) .formTable {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-gap: 0.21em 1em;
+}
+form:is(#addBook) .formTable > .row {
+  display: contents;
+}
+form:is(#addBook) .formTable > .row  > .label {
+  grid-column: 1;
+}
+form:is(#addBook) .formTable > .row  > .input {
+  grid-column: 2;
+}
+
+form:is(#postRpgsystem,#postTitle,#addBook) :is(table,.formTable)+.message.ok {
   color: var(--color-cd-dark-green);
 }
-form:is(#postRpgsystem,#postTitle) table+.message.error {
+form:is(#postRpgsystem,#postTitle,#addBook) :is(table,.formTable)+.message.error {
   color: #c00;
 }

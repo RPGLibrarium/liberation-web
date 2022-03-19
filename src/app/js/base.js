@@ -222,7 +222,7 @@ function renderPage(loadData, page, args={}) {
     // update navigation bar (maybe a new item is active now‽)
     NAV_ACTIVE = navPageActive;
     updateNavBar();
-    page.onDisplay(pageElement);
+    page.onDisplay(pageElement, data);
     // remove old page elements after woosh animation
     execAfter(()=>oldPages.forEach(e => e.remove()), WHOOSH_DURATION);
   }).catch(e => {

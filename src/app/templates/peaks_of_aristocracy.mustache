@@ -64,3 +64,35 @@
     <p class="message"></p>
   </form>
 </section>
+<section>
+  <h3>Neues Buch</h3>
+  <form method="post" id="addBook">
+    <div class="formTable">
+      <div class="row">
+        <div class="label"><label for="addBook-guild"/>Gilde</div>
+        <div class="input"><select id="addBook-guild" name="guild" required>
+          {{#guilds}}
+            <option value="{{id}}">{{name}}{{#address}} ({{.}}){{/address}}</option>
+          {{/guilds}}
+        </select></div>
+      </div><div class="row">
+        <div class="label"><label for="addBook-title"/>Titel</div>
+        <div class="input"><select id="addBook-title" name="title" required>
+          {{#titles}}
+            <option value="{{id}}">{{name}} ({{year}}; {{_system.name}})</option>
+          {{/titles}}
+        </select></div>
+      </div><div class="row">
+        <div class="label"><label for="addBook-quality"/>Zustand</div>
+        <div class="input"><input id="addBook-quality" name="quality" type="text"/></input></div>
+      </div><div class="row">
+        <div class="label"><label for="addBook-inventory"/>Inventarnummer</div>
+        <div class="input"><input id="addBook-inventory" name="inventory" type="number" required/></input></div>
+      </div><div class="row">
+        <div class="label"></div>
+        <div class="input"><input type="submit" value="Erstellen"/></div>
+      </div>
+    </div>
+    <p class="message"></p>
+  </form>
+</section>
