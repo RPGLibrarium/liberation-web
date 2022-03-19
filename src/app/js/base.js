@@ -147,8 +147,13 @@ export const ROUTER = new Navigo(null, true, '#');
 ROUTER
   .on(()=>ROUTER.navigate('librarium')); //Set landing page here!
 ROUTER.notFound(()=>{
+  // if there is nothing ... go back to the start page
+  if (location.hash === '' || location.hash === '#' || location.hash.startsWith('#?')) {
+    return ROUTER.navigate('librarium');
+  }
   const page = ROUTER._lastRouteResolved;
   console.error('Whoopsie! Looks like 404 to me ...', page);
+  // TODO: show a good 404 page!
 });
 
 // ######
