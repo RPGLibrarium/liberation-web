@@ -1,5 +1,5 @@
 // 'use strict';
-import {API, PAGE, keycloak, MAGIC, ROUTER, TEMPLATES} from './base.js';
+import {API, PAGE, keycloak, logout, login, MAGIC, ROUTER, TEMPLATES} from './base.js';
 import './librarium.js';
 import './rpgsystems.js';
 import './guilds.js';
@@ -9,6 +9,7 @@ import './collection.js';
 import './aristocracy.js';
 import './profile.js';
 
+// useful for debugging
 window.keycloak = () => keycloak;
 
 const initialLoadingPromise = loadTemplates();
@@ -48,13 +49,13 @@ document.querySelector(':root').addEventListener('click', e=>{
   if(e.target.matches('nav a[data-pageId=login]')){
     e.preventDefault();
     console.info('You pretend to belong to us? Prove it!');
-    keycloak.login({scope: 'account:modify aristocrat:accounts:modify aristocrat:accounts:read aristocrat:books:modify aristocrat:books:read aristocrat:guilds:modify librarian:rpgsystems:modify librarian:titles:modify'});
+    login();
     return;
   }
   if(e.target.matches('nav a[data-pageId=logout]')){
     e.preventDefault();
     console.info('You don\'t like us anymore? Then let us alone!');
-    keycloak.logout();
+    logout();
     return;
   }
 });

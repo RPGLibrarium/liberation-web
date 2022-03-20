@@ -10,6 +10,10 @@ let CONFIG = null;
 let PAGES = {};
 const ALL_PAGES = [];
 export let keycloak = null;
+const STORAGE_KEY_KC_TOKEN = 'lastKcToken';
+const STORAGE_KEY_KC_ID_TOKEN = 'lastKcIdToken';
+const STORAGE_KEY_KC_REFRESH_TOKEN = 'lastKcRefreshToken';
+const STORAGE = window.localStorage;
 
 
 // #####
@@ -180,7 +184,7 @@ function loadKeycloak(waitForStuff, thenDoStuff) {
         });
         scriptNode.addEventListener('load', loadEvt => {
           console.debug('keycloak script loaded!');
-          initKeycloak(waitForStuff, thenDoStuff);
+          initKeycloak(conf, waitForStuff, thenDoStuff);
         });
         scriptNode.src = scriptLocation;
         scriptNode.async = true;
@@ -192,15 +196,32 @@ function loadKeycloak(waitForStuff, thenDoStuff) {
   }
 }
 
-function initKeycloak(waitForStuff, thenDoStuff){
+function initKeycloak(config, waitForStuff, thenDoStuff){
   if(!keycloak){
     console.debug("Init keycloak")
     // TODO the following seems to be easier than passing the conf object o_O ... we should be able to reuse it!
-    keycloak = new Keycloak(`${WEB_ROOT_PATH}/${CONFIG.keycloakConfigLocation}`);
+    //keycloak = new Keycloak(`${WEB_ROOT_PATH}/${CONFIG.keycloakConfigLocation}`);
+    keycloak = new Keycloak({
+      url: config['auth-server-url'],
+      clientId: config.resource,
+      ...config,
+    });
+  }
+
+  let initFromCache = {};
+  if (STORAGE) {
+    initFromCache = {
+      token: STORAGE.getItem(STORAGE_KEY_KC_TOKEN) || undefined,
+      idToken: STORAGE.getItem(STORAGE_KEY_KC_ID_TOKEN) || undefined,
+      refreshToken: STORAGE.getItem(STORAGE_KEY_KC_REFRESH_TOKEN) || undefined,
+    };
   }
 
   keycloak.init({
+    ...initFromCache,
     onLoad: 'check-sso',
+    silentCheckSsoRedirectUri: new URL('./silent-check-sso.html', location.href).toString(),
+    silentCheckSsoFallback: true,
   })
   .then(() => {
     waitForStuff.then(thenDoStuff);
@@ -219,7 +240,13 @@ function initWithoutKeycloak(waitForStuff, thenDoStuff){
 function updateKeycloakState(){
   if(keycloak && keycloak.authenticated && keycloakUpdateInterval === null){
     keycloakUpdateInterval = setInterval(refreshToken, KC_REFRESH_INTERVAL * 1000)
+    if (STORAGE) {
+      STORAGE.setItem(STORAGE_KEY_KC_TOKEN, keycloak.token);
+      STORAGE.setItem(STORAGE_KEY_KC_ID_TOKEN, keycloak.idToken);
+      STORAGE.setItem(STORAGE_KEY_KC_REFRESH_TOKEN, keycloak.refreshToken);
+    }
   } else if(!(keycloak && keycloak.authenticated) && keycloakUpdateInterval !== null){
+    console.warn('not logged in anymore ...');
     clearInterval(keycloakUpdateInterval);
     keycloakUpdateInterval = null;
   }
@@ -238,6 +265,19 @@ function refreshToken() {
         console.err('refreshing token failed:', err);
         updateKeycloakState();
     });
+}
+
+export function login() {
+    keycloak.login({scope: 'account:modify aristocrat:accounts:modify aristocrat:accounts:read aristocrat:books:modify aristocrat:books:read aristocrat:guilds:modify librarian:rpgsystems:modify librarian:titles:modify'});
+}
+
+export function logout() {
+    if (STORAGE) {
+      STORAGE.removeItem(STORAGE_KEY_KC_TOKEN);
+      STORAGE.removeItem(STORAGE_KEY_KC_ID_TOKEN);
+      STORAGE.removeItem(STORAGE_KEY_KC_REFRESH_TOKEN);
+    }
+    keycloak.logout();
 }
 
 function checkRoles(role) {
