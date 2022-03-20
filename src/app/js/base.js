@@ -186,8 +186,8 @@ function loadKeycloak(waitForStuff, thenDoStuff) {
         scriptNode.async = true;
         document.querySelector('head').appendChild(scriptNode);
       })
-      .catch(err => {
-        console.error('Fetching Keycloak configuration failed!', err);
+      .catch(e => {
+        console.error('Fetching Keycloak configuration failed!', e);
       })
   }
 }
@@ -202,11 +202,11 @@ function initKeycloak(waitForStuff, thenDoStuff){
   keycloak.init({
     onLoad: 'check-sso',
   })
-  .success(()=>{
+  .then(() => {
     waitForStuff.then(thenDoStuff);
     updateKeycloakState();
   })
-  .error(err => {
+  .catch(err => {
     console.error('failed initialising keycloak', err);
     initWithoutKeycloak(waitForStuff, thenDoStuff);
   })
