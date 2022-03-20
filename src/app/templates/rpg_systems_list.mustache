@@ -1,11 +1,14 @@
 <section>
   <h1>Systemliste</h1>
-  <table class="wushing fancytbl editable systems">
+  <table class="wushing fancytbl {{#_AUTHENTICATED}}editable {{/_AUTHENTICATED}}systems">
     <thead>
       <tr>
         <th>System</th>
         <th>Kürzel</th>
+        {{#_AUTHENTICATED}}
+        {{% TODO: more fine grained control ... %}}
         <th class="menucol"/>
+        {{/_AUTHENTICATED}}
       </tr>
     </thead>
     <tbody>
@@ -13,12 +16,13 @@
         <tr data-rpgsystemId="{{id}}">
           <td>
               <span class="value-text" data-name="name">{{name}}</span>
-              <input class="value-form" name="name" type="text" value="{{name}}"/>
+              {{#_AUTHENTICATED}}<input class="value-form" name="name" type="text" value="{{name}}"/>{{/_AUTHENTICATED}}
           </td>
           <td>
               <span class="value-text" data-name="shortname">{{shortname}}</span>
-              <input class="value-form" name="shortname" type="text" value="{{shortname}}"/>
+              {{#_AUTHENTICATED}}<input class="value-form" name="shortname" type="text" value="{{shortname}}"/>{{/_AUTHENTICATED}}
           </td>
+          {{#_AUTHENTICATED}}
           <td class="menucol">
             <div class="rowmenu">
               <button type="button" title="Bearbeiten" value="edit" class="rowbutton"><i class="fa-solid fa-pencil"></i></button>
@@ -27,6 +31,7 @@
               <button type="button" title="Abbrechen" value="abort" class="rowbutton"><i class="fa-solid fa-rotate-left"></i></button>
             </div>
           </td>
+          {{/_AUTHENTICATED}}
         </tr>
       {{/rpgsystems}}
     </tbody>
