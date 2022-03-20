@@ -14,12 +14,13 @@ window.keycloak = () => keycloak;
 const initialLoadingPromise = loadTemplates();
 
 function loadTemplates(){
-  const loadTpl = name => axios(`templates/${name}.mustache`)
-    .then(res => {
-      TEMPLATES[name] = res.data;
+  const loadTpl = name => API.get(new URL(`templates/${name}.mustache`, location.href))
+    .then(r => r.text())
+    .then(data => {
+      TEMPLATES[name] = data;
       Mustache.parse(TEMPLATES[name]);
     });
-  return axios.all([
+  return Promise.all([
     loadTpl('nav_bar'),
     loadTpl('profile_details'),
     loadTpl('rpg_systems_list'),
