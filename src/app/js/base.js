@@ -244,7 +244,7 @@ function checkRoles(role) {
   return keycloak && keycloak.authenticated && keycloak.tokenParsed.roles && (keycloak.tokenParsed.roles.includes(role) || keycloak.tokenParsed.roles.includes('admin'));
 }
 
-function checkScope(scope) {
+export function checkScope(scope) {
   return keycloak && keycloak.authenticated && keycloak.tokenParsed.scope.split(' ').includes(scope);
 }
 

@@ -1,14 +1,14 @@
 <section>
   <h1>Systemliste</h1>
-  <table class="wushing fancytbl {{#_AUTHENTICATED}}editable {{/_AUTHENTICATED}}systems">
+  <table class="wushing fancytbl {{#_editable}}editable {{/_editable}}systems">
     <thead>
       <tr>
         <th>System</th>
         <th>Kürzel</th>
-        {{#_AUTHENTICATED}}
+        {{#_editable}}
         {{% TODO: more fine grained control ... %}}
         <th class="menucol"/>
-        {{/_AUTHENTICATED}}
+        {{/_editable}}
       </tr>
     </thead>
     <tbody>
@@ -16,13 +16,13 @@
         <tr data-rpgsystemId="{{id}}">
           <td>
               <span class="value-text" data-name="name">{{name}}</span>
-              {{#_AUTHENTICATED}}<input class="value-form" name="name" type="text" value="{{name}}"/>{{/_AUTHENTICATED}}
+              {{#_editable}}<input class="value-form" name="name" type="text" value="{{name}}"/>{{/_editable}}
           </td>
           <td>
               <span class="value-text" data-name="shortname">{{shortname}}</span>
-              {{#_AUTHENTICATED}}<input class="value-form" name="shortname" type="text" value="{{shortname}}"/>{{/_AUTHENTICATED}}
+              {{#_editable}}<input class="value-form" name="shortname" type="text" value="{{shortname}}"/>{{/_editable}}
           </td>
-          {{#_AUTHENTICATED}}
+          {{#_editable}}
           <td class="menucol">
             <div class="rowmenu">
               <button type="button" title="Bearbeiten" value="edit" class="rowbutton"><i class="fa-solid fa-pencil"></i></button>
@@ -31,7 +31,7 @@
               <button type="button" title="Abbrechen" value="abort" class="rowbutton"><i class="fa-solid fa-rotate-left"></i></button>
             </div>
           </td>
-          {{/_AUTHENTICATED}}
+          {{/_editable}}
         </tr>
       {{/rpgsystems}}
     </tbody>

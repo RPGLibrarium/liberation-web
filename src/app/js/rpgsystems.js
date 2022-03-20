@@ -1,18 +1,29 @@
-import {API,PAGE,ROUTER,nestWrap} from './base.js';
+import {API,PAGE,ROUTER,checkScope,nestWrap} from './base.js';
 import {loadTitles} from './titles.js';
 
 PAGE('systems', 'Systeme', 'rpg_systems_list', 'librarium', undefined, onDisplayRpgSystems);
 PAGE('system', 'System', 'rpg_system', 'librarium');
 
 ROUTER
-  .on('systems', ()=>PAGE._RENDER(nestWrap('rpgsystems', loadRpgSystems), PAGE.systems))
+  .on('systems', ()=>PAGE._RENDER(enrichData(nestWrap('rpgsystems', loadRpgSystems)), PAGE.systems))
   //.on('systems/:id', args=>PAGE._RENDER(nestWrap('rpgsystem', loadRpgSystem), PAGE.system, args));
   .on('systems/:id', args=>PAGE._RENDER(nestWrap('rpgsystem', loadRpgSystemWithTitles), PAGE.system, args));
+
+function canEditSystems() {
+  return checkScope('librarian:rpgsystems:modify');
+}
+
+function enrichData(fn) {
+  return _ => fn().then(data => {
+    data._editable = canEditSystems();
+    return data;
+  })
+}
 
 function onDisplayRpgSystems(pageNode) {
   let systemsTable = pageNode.querySelector('table.systems');
   if (systemsTable) {
-    const editable = systemsTable.matches('.editable');
+    const editable = systemsTable.matches('.editable') && canEditSystems();
     let editing = false;
 
     systemsTable.querySelectorAll('tr[data-rpgsystemid]').forEach((row) => {
