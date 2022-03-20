@@ -1,17 +1,32 @@
 <section>
   <h1>Systemliste</h1>
-  <table class="wushing fancytbl systems">
+  <table class="wushing fancytbl editable systems">
     <thead>
       <tr>
         <th>System</th>
         <th>Kürzel</th>
+        <th class="menucol"/>
       </tr>
     </thead>
     <tbody>
       {{#rpgsystems}}
         <tr data-rpgsystemId="{{id}}">
-          <td>{{name}}</td>
-          <td>{{shortname}}</td>
+          <td>
+              <span class="value-text" data-name="name">{{name}}</span>
+              <input class="value-form" name="name" type="text" value="{{name}}"/>
+          </td>
+          <td>
+              <span class="value-text" data-name="shortname">{{shortname}}</span>
+              <input class="value-form" name="shortname" type="text" value="{{shortname}}"/>
+          </td>
+          <td class="menucol">
+            <div class="rowmenu">
+              <button type="button" title="Bearbeiten" value="edit" class="rowbutton"><i class="fa-solid fa-pencil"></i></button>
+              <button type="button" title="Löschen" value="delete" class="rowbutton red"><i class="fa-solid fa-trash"></i></button>
+              <button type="button" title="Speichern" value="save" class="rowbutton"><i class="fa-solid fa-floppy-disk"></i></button>
+              <button type="button" title="Abbrechen" value="abort" class="rowbutton"><i class="fa-solid fa-rotate-left"></i></button>
+            </div>
+          </td>
         </tr>
       {{/rpgsystems}}
     </tbody>

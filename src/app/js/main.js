@@ -57,13 +57,4 @@ document.querySelector(':root').addEventListener('click', e=>{
     keycloak.logout();
     return;
   }
-  if(e.target.matches('.systems tr[data-rpgsystemid] td *, .systems tr[data-rpgsystemid] td')){
-    let node = e.target;
-    while(!node.hasAttribute('data-rpgsystemid')){
-      node = node.parentNode;
-    }
-    let systemid = node.getAttribute('data-rpgsystemid');
-    ROUTER.navigate('systems/' + encodeURIComponent(systemid));
-    return;
-  }
 });

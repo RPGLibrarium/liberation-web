@@ -210,9 +210,40 @@ table.fancytbl th {
   padding: .5em inherit;
 }
 
+table.editable tr.editing .value-text {
+  visibility: hidden;
+}
+
+table.editable tr.editing .rowbutton:is([value=edit],[value=delete]),
+table.editable tr:not(.editing) :is(.value-form,.rowbutton:is([value=save],[value=abort])){
+  display: none;
+}
+
+table.editable .value-form {
+  width: calc(100% - 2em);
+  position: absolute;
+  left: 0.25em;
+  top: 0.2em;
+}
+
+table.editable td {
+  position: relative;
+}
+
+table.editable .menucol {
+  width: 0;
+  min-width: fit-content;
+}
+
+table.editable .rowmenu {
+  white-space: nowrap;
+  width: fit-content;
+}
+
 body table:first-of-type {
   position: relative;
 }
+
 body section:first-of-type table:first-of-type::before {
   background-image: url("../images/Biene.svg");
   background-position: right bottom;
