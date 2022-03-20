@@ -7,6 +7,6 @@ ROUTER
 
 
 export function loadGuilds() {
-  return API.get('/guilds')
+  return API.get('guilds')
     .then(r => r.json());
 }

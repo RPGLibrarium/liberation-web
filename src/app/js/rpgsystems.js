@@ -15,12 +15,17 @@ export function loadRpgSystems() {
 }
 
 export function loadRpgSystem({id}) {
-  return API.get('rpgsystems/' + encodeURIComponent(args.id))
+  return API.get('rpgsystems/' + encodeURIComponent(id))
     .then(r => r.json());
 }
 
 export function addRpgSystem({system}) {
   return API.post('rpgsystems', { data: system })
+    .then(r => r.json());
+}
+
+export function updateRpgSystem({system}) {
+  return API.put('rpgsystems', { data: system })
     .then(r => r.json());
 }
 

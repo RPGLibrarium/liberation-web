@@ -9,10 +9,8 @@ ROUTER
   .on('profile', ()=>PAGE._RENDER(loadProfileData, PAGE.profile));
 
 function loadMyAccountInfo() {
-  return API({
-      method: 'GET',
-      url: '/me',
-  }).then(stuff => stuff.data);
+  return API.get('me')
+    .then(r => r.json());
 }
 
 function loadProfileData() {
