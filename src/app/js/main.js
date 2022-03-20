@@ -32,42 +32,6 @@ function loadTemplates(){
     .catch(err => console.error('something went wrong (fetching templates)', err));
 }
 
-// ##########################
-// DATA RETRIEVAL FUNCTIONS #
-// ##########################
-
-
-function loadTestpage(){
-  // rpg systems
-  API({
-      method: 'GET',
-      url: '/rpgsystems',
-  })
-    .then(stuff => {
-      let rendered = Mustache.render(TEMPLATES.rpg_systems_list, stuff.data);
-      let section = document.createElement('section');
-      section.classList.add('content');
-      section.innerHTML = rendered;
-      document.querySelector('main').appendChild(section);
-    })
-    .catch(err => console.error('we got error'));
-
-    // titles
-    API({
-        method: 'GET',
-        url: '/titles',
-    })
-      .then(stuff => {
-        let rendered = Mustache.render(TEMPLATES.titles_list, stuff.data);
-        let section = document.createElement('section');
-        section.classList.add('content');
-        section.innerHTML = rendered;
-        document.querySelector('main').appendChild(section);
-      })
-      .catch(err => console.error('we got error'));
-}
-
-
 // #####################
 // ADD EVENT LISTENERS #
 // #####################
