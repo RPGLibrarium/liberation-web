@@ -7,18 +7,13 @@ ROUTER
   .on('titles', ()=>PAGE._RENDER(nestWrap('titles', loadTitlesWithSystem), PAGE.titles));
 
 export function loadTitles() {
-  return API({
-      method: 'GET',
-      url: '/titles',
-  }).then(stuff => stuff.data);
+  return API.get('titles')
+    .then(r => r.json());
 }
 
-export function addTitle(args) {
-  return API({
-      method: 'POST',
-      url: '/titles',
-      data: args.title,
-  }).then(stuff => stuff.data);
+export function addTitle({title}) {
+  return API.post('titles', { data: title })
+    .then(r => r.json());
 }
 
 //////////////

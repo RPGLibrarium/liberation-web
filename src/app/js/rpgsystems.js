@@ -10,24 +10,18 @@ ROUTER
   .on('systems/:id', args=>PAGE._RENDER(nestWrap('rpgsystem', loadRpgSystemWithTitles), PAGE.system, args));
 
 export function loadRpgSystems() {
-  return API({
-      method: 'GET',
-      url: '/rpgsystems',
-  }).then(stuff => stuff.data);
-}
-export function loadRpgSystem(args) {
-  return API({
-      method: 'GET',
-      url: '/rpgsystems/' + encodeURIComponent(args.id),
-  }).then(stuff => stuff.data);
+  return API.get('rpgsystems')
+    .then(r => r.json());
 }
 
-export function addRpgSystem(args) {
-  return API({
-      method: 'POST',
-      url: '/rpgsystems',
-      data: args.system,
-  }).then(stuff => stuff.data);
+export function loadRpgSystem({id}) {
+  return API.get('rpgsystems/' + encodeURIComponent(args.id))
+    .then(r => r.json());
+}
+
+export function addRpgSystem({system}) {
+  return API.post('rpgsystems', { data: system })
+    .then(r => r.json());
 }
 
 ////////////////////

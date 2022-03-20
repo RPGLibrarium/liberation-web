@@ -7,8 +7,6 @@ ROUTER
 
 
 export function loadGuilds() {
-  return API({
-      method: 'GET',
-      url: '/guilds',
-  }).then(stuff => stuff.data);
+  return API.get('/guilds')
+    .then(r => r.json());
 }
