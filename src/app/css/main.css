@@ -502,3 +502,22 @@ form:is(#postRpgsystem,#postTitle,#addBook) :is(table,.formTable)+.message.ok {
 form:is(#postRpgsystem,#postTitle,#addBook) :is(table,.formTable)+.message.error {
   color: #c00;
 }
+
+.statisticsTable {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.statisticsEntry .label {
+  margin-right: 10pt;
+  font-size: 40pt;
+  font-weight: 300;
+}
+
+.statisticsEntry .data {
+  margin-left: 10pt;
+  font-size: 50pt;
+  font-weight: 400;
+}

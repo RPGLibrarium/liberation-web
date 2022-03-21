@@ -1,8 +1,9 @@
 import {API,PAGE,ROUTER,nestWrap} from './base.js';
 import {addRpgSystem,loadRpgSystems} from './rpgsystems.js';
 import {addTitle,loadTitles} from './titles.js';
-import {addBook} from './books.js';
+import {addBook,loadBooks} from './books.js';
 import {loadGuilds} from './guilds.js';
+import {loadAccounts} from './accounts.js';
 
 PAGE('aristocracy', 'Aristokratie', 'peaks_of_aristocracy', 42, PAGE._CONDITIONALS.onAristocrat, onDisplayAristocracy);
 
@@ -10,8 +11,8 @@ ROUTER
   .on('aristocracy', ()=>PAGE._RENDER(loadAristocracyPageData,PAGE.aristocracy))
 
 function loadAristocracyPageData () {
-  return Promise.all([loadRpgSystems(), loadTitles(), loadGuilds()])
-    .then(([systems, titles, guilds]) => {
+  return Promise.all([loadRpgSystems(), loadTitles(), loadBooks(), loadGuilds(), loadAccounts()])
+    .then(([systems, titles, books, guilds, accounts]) => {
       let sysObj = {};
       systems.forEach(s => sysObj[s.id || s.system_id || s.rpg_system_id || null] = s);
       let titlesObj = {}
@@ -25,6 +26,7 @@ function loadAristocracyPageData () {
         titles,
         titlesById: titlesObj,
         guilds,
+        statistics: [ ['Bücher', books.length], ['Nutzer', accounts.length], ['Gilden', guilds.length] ]
       };
     });
 }

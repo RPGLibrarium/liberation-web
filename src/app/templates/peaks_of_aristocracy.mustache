@@ -1,14 +1,24 @@
 <section>
-    <h1>You are important!</h1>
-    <ul class="linkBoxList">
-      <li><a href="#allSystems">Alle Systeme</a></li>
-      <li><a href="#allTitles">Alle Titel</a></li>
-      <li><a href="#allBooks">Alle Bücher</a></li>
-      <li><a href="#allAccounts">Alle Accounts</a></li>
-      <li><a href="#allGuilds">Alle Gilden</a></li>
-    </ul>
+  <div class="statisticsTable">
+    {{#statistics}}
+      <div class="statisticsEntry">
+        <span class="label">{{0}}</span>
+        <span class="data">{{1}}</span>
+      </div>
+    {{/statistics}}
+  </div>
+</section>
+<section>
+  <h1>You are important!</h1>
+  <ul class="linkBoxList">
+    <li><a href="#allSystems">Alle Systeme</a></li>
+    <li><a href="#allTitles">Alle Titel</a></li>
+    <li><a href="#allBooks">Alle Bücher</a></li>
+    <li><a href="#allAccounts">Alle Accounts</a></li>
+    <li><a href="#allGuilds">Alle Gilden</a></li>
+  </ul>
 
-  </section>
+</section>
 </section>
 <section>
   <h3>Neues System</h3>
@@ -36,12 +46,12 @@
       <tr>
         <td><label for="fTitleRpgsystem">System</label></td>
         <td>
-            <!-- TODO: Nicer dropdown -->
-            <select id="fTitleRpgsystem" name="fTitleRpgsystem">
-              {{#rpgsystems}}
-                <option value="{{id}}">{{#shortname}}[{{.}}] {{/shortname}}{{name}}</option>
-              {{/rpgsystems}}
-            </select>
+          <!-- TODO: Nicer dropdown -->
+          <select id="fTitleRpgsystem" name="fTitleRpgsystem">
+            {{#rpgsystems}}
+              <option value="{{id}}">{{#shortname}}[{{.}}] {{/shortname}}{{name}}</option>
+            {{/rpgsystems}}
+          </select>
         </td>
       </tr>
       <tr>
@@ -78,20 +88,24 @@
             <option value="{{id}}">{{name}}{{#address}} ({{.}}){{/address}}</option>
           {{/guilds}}
         </select></div>
-      </div><div class="row">
+      </div>
+      <div class="row">
         <div class="label"><label for="addBook-title"/>Titel</div>
         <div class="input"><select id="addBook-title" name="title" required>
           {{#titles}}
             <option value="{{id}}">{{name}} ({{year}}; {{_system.name}})</option>
           {{/titles}}
         </select></div>
-      </div><div class="row">
+      </div>
+      <div class="row">
         <div class="label"><label for="addBook-quality"/>Zustand</div>
         <div class="input"><input id="addBook-quality" name="quality" type="text"/></div>
-      </div><div class="row">
+      </div>
+      <div class="row">
         <div class="label"><label for="addBook-inventory"/>Inventarnummer</div>
         <div class="input"><input id="addBook-inventory" name="inventory" type="number" required/></div>
-      </div><div class="row">
+      </div>
+      <div class="row">
         <div class="label"></div>
         <div class="input"><input type="submit" value="Erstellen"/></div>
       </div>
