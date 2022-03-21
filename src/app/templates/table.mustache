@@ -1,0 +1,36 @@
+<table class="wushing fancytbl {{#editable}}editable {{/editable}}{{class}}">
+  <thead>
+  <tr>
+    {{#header}}
+      <th>{{.}}</th>
+    {{/header}}
+    {{#editable}}<th class="menucol"/>{{/editable}}
+  </tr>
+  </thead>
+  <tbody>
+  {{#rows}}
+    <tr data-rowId="{{id}}">
+      {{#columns}}
+        <td>
+          <span class="value-text" data-name="{{columnName}}">{{columnValue}}</span>
+          {{#editable}}<input class="value-form" name="{{columnName}}" type="text" value="{{columnValue}}"/>{{/editable}}
+        </td>
+      {{/columns}}
+      {{#editable}}
+        <td class="menucol">
+          <div class="rowmenu">
+            <button type="button" title="Bearbeiten" value="edit" class="rowbutton"><i
+                class="fa-solid fa-pencil"></i></button>
+            <button type="button" title="Löschen" value="delete" class="rowbutton red"><i
+                class="fa-solid fa-trash"></i></button>
+            <button type="button" title="Speichern" value="save" class="rowbutton"><i
+                class="fa-solid fa-floppy-disk"></i></button>
+            <button type="button" title="Abbrechen" value="abort" class="rowbutton"><i
+                class="fa-solid fa-rotate-left"></i></button>
+          </div>
+        </td>
+      {{/editable}}
+    </tr>
+  {{/rows}}
+  </tbody>
+</table>

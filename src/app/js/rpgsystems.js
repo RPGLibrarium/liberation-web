@@ -1,24 +1,26 @@
 import {API,PAGE,ROUTER,checkScope,nestWrap} from './base.js';
 import {loadTitles} from './titles.js';
-import {registerEditEvents} from './table.js';
+import {registerEditEvents,createTable} from './table.js';
 
 PAGE('systems', 'Systeme', 'rpg_systems_list', 'librarium', undefined, onDisplayRpgSystems);
 PAGE('system', 'System', 'rpg_system', 'librarium');
 
 ROUTER
-  .on('systems', ()=>PAGE._RENDER(enrichData(nestWrap('rpgsystems', loadRpgSystems)), PAGE.systems))
+  .on('systems', ()=>PAGE._RENDER(loadPageData, PAGE.systems))
   //.on('systems/:id', args=>PAGE._RENDER(nestWrap('rpgsystem', loadRpgSystem), PAGE.system, args));
   .on('systems/:id', args=>PAGE._RENDER(nestWrap('rpgsystem', loadRpgSystemWithTitles), PAGE.system, args));
 
-function canEditSystems() {
-  return checkScope('librarian:rpgsystems:modify');
+async function loadPageData() {
+  let rpgsystems = await loadRpgSystems();
+  return {
+    tables: {
+      rpgsystems: createTable('systems', ['System', 'Kürzel'], rpgsystems, canEditSystems())
+    }
+  };
 }
 
-function enrichData(fn) {
-  return _ => fn().then(data => {
-    data._editable = canEditSystems();
-    return data;
-  })
+function canEditSystems() {
+  return checkScope('librarian:rpgsystems:modify');
 }
 
 function onDisplayRpgSystems(pageNode) {

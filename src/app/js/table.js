@@ -9,6 +9,23 @@ const rowButtonClass = 'rowbutton';
 const inputClass = 'value-form';
 const textClass = 'value-text';
 
+//TODO: this feels like OOP. Perhaps there is a more idiomatic way in JS.
+export function createTable(cls, header, data, editable) {
+  let table = {
+    editable: editable,
+    class: cls,
+    header: header,
+  };
+  table.rows = data.map((row) => ({
+      //TODO: variable identifier
+      id: row.id,
+      columns: Object.entries(row)
+        .filter(([k, v]) => k != 'id')
+        .map(([k, v]) => ({columnName: k, columnValue: v})),
+    }));
+  return table;
+}
+
 export function registerEditEvents({
     table,
     canEdit = () => true, 

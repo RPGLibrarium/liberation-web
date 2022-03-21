@@ -304,7 +304,7 @@ function renderPage(loadData, page, args={}) {
       ...data,
     };
     // render data to template
-    const rendered = Mustache.render(TEMPLATES[page.template], data);
+    const rendered = Mustache.render(TEMPLATES[page.template], data, {table: TEMPLATES.table});
     // generate page element
     let pageElement = document.createElement('div');
     pageElement.classList.add('page');

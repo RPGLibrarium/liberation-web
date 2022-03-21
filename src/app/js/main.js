@@ -24,6 +24,7 @@ function loadTemplates(){
   return Promise.all([
     loadTpl('nav_bar'),
     loadTpl('profile_details'),
+    loadTpl('table'),
     loadTpl('rpg_systems_list'),
     loadTpl('titles_list'),
     loadTpl('page_librarium'),
