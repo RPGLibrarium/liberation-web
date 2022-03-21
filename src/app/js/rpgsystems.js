@@ -1,5 +1,6 @@
 import {API,PAGE,ROUTER,checkScope,nestWrap} from './base.js';
 import {loadTitles} from './titles.js';
+import {registerEditEvents} from './table.js';
 
 PAGE('systems', 'Systeme', 'rpg_systems_list', 'librarium', undefined, onDisplayRpgSystems);
 PAGE('system', 'System', 'rpg_system', 'librarium');
@@ -23,75 +24,22 @@ function enrichData(fn) {
 function onDisplayRpgSystems(pageNode) {
   let systemsTable = pageNode.querySelector('table.systems');
   if (systemsTable) {
-    const editable = systemsTable.matches('.editable') && canEditSystems();
-    let editing = false;
+    registerEditEvents({
+      table: systemsTable,
+      canEdit: canEditSystems,
+      onUpdate: updateRpgSystem,
+    });
 
-    systemsTable.querySelectorAll('tr[data-rpgsystemid]').forEach((row) => {
-      if (editable) {
-        let rowInputs = {};
-        row.querySelectorAll('input:not([type=submit]), select').forEach(el => rowInputs[el.name] = el);
-        let rowValues = {};
-        row.querySelectorAll('.value-text[data-name]').forEach(el => rowValues[el.getAttribute('data-name')] = el);
-
-        function abortEditing() {
-          if (!editing) return;
-          editing = false
-          row.classList.remove('editing')
-          // Reset inputs
-          Object.values(rowInputs).forEach(input => {
-            input.value = input.getAttribute('value')
-          });
-        }
-
-        row.querySelector('.rowbutton[value=edit]')
-          .addEventListener('click', event => {
-            event.preventDefault()
-            event.stopPropagation();
-            if (editing) return;
-            editing = true
-            row.classList.add('editing')
-          });
-        row.querySelector('.rowbutton[value=delete]')
-          .addEventListener('click', event => {
-            event.preventDefault()
-            event.stopPropagation();
-            // TODO: edit code here
-          });
-        row.querySelector('.rowbutton[value=save]')
-          .addEventListener('click', event => {
-            event.preventDefault()
-            event.stopPropagation();
-            updateRpgSystem({id: Number(row.getAttribute('data-rpgsystemid')), system:{
-              name: rowInputs.name.value,
-              shortname: rowInputs.shortname.value !== "" ? rowInputs.shortname.value : null,
-            }}).then(system => {
-              console.debug('updated rpgsystem', system);
-              rowValues.name.textContent = system.name;
-              rowValues.shortname.textContent = system.shortname !== null ? system.shortname : '';
-              rowInputs.name.setAttribute('value', system.name);
-              rowInputs.shortname.setAttribute('value', system.shortname !== null ? system.shortname : '');
-              abortEditing();
-            }).catch(err => {
-              console.error('updating rpgsystem failed', err);
-              //TODO: nicer error message
-              alert(`Fehler ${err}`);
-            })
-          });
-        row.querySelector('.rowbutton[value=abort]')
-          .addEventListener('click', event => {
-            event.preventDefault();
-            event.stopPropagation();
-            abortEditing();
-          });
-      }
+    systemsTable.querySelectorAll('tr[data-rowId]').forEach(row => {
       row.addEventListener('click', event => {
-        if(editing || event.target.matches('a,button,select,input')){ return; }
+//        if(editing || event.target.matches('a,button,select,input')){ return; }
+        if(event.target.matches('a,button,select,input')){ return; }
         event.preventDefault()
-        let systemid = row.getAttribute('data-rpgsystemid');
+        let systemid = row.getAttribute('data-rowId');
         ROUTER.navigate('systems/' + encodeURIComponent(systemid));
       });
     });
-  }
+  };
 }
 
 export function loadRpgSystems() {
@@ -109,7 +57,7 @@ export function addRpgSystem({system}) {
     .then(r => r.json());
 }
 
-export function updateRpgSystem({id, system}) {
+export function updateRpgSystem(id, system) {
   return API.put('rpgsystems/'+ encodeURIComponent(id), { data: system })
     .then(r => r.json());
 }
