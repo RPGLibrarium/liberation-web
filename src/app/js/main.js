@@ -2,6 +2,7 @@
 import {API, PAGE, keycloak, logout, login, MAGIC, ROUTER, TEMPLATES} from './base.js';
 import './librarium.js';
 import './rpgsystems.js';
+import './accounts.js';
 import './guilds.js';
 import './titles.js';
 import './books.js';
@@ -25,9 +26,12 @@ function loadTemplates(){
     loadTpl('nav_bar'),
     loadTpl('profile_details'),
     loadTpl('table'),
+    loadTpl('page_librarium'),
     loadTpl('rpg_systems_list'),
     loadTpl('titles_list'),
-    loadTpl('page_librarium'),
+    loadTpl('books_list'),
+    loadTpl('accounts_list'),
+    loadTpl('guilds_list'),
     loadTpl('peaks_of_aristocracy'),
     loadTpl('rpg_system'),
   ])

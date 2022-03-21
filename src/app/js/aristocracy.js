@@ -7,8 +7,7 @@ import {loadGuilds} from './guilds.js';
 PAGE('aristocracy', 'Aristokratie', 'peaks_of_aristocracy', 42, PAGE._CONDITIONALS.onAristocrat, onDisplayAristocracy);
 
 ROUTER
-  //.on('aristocracy', ()=>PAGE._RENDER(()=>Promise.resolve({}),PAGE.aristocracy));
-  .on('aristocracy', ()=>PAGE._RENDER(loadAristocracyPageData,PAGE.aristocracy));
+  .on('aristocracy', ()=>PAGE._RENDER(loadAristocracyPageData,PAGE.aristocracy))
 
 function loadAristocracyPageData () {
   return Promise.all([loadRpgSystems(), loadTitles(), loadGuilds()])

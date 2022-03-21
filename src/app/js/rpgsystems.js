@@ -1,22 +1,33 @@
 import {API,PAGE,ROUTER,checkScope,nestWrap} from './base.js';
 import {loadTitles} from './titles.js';
-import {registerTableEvents,createTable} from './table.js';
+import {registerTableEvents} from './table.js';
 
 PAGE('systems', 'Systeme', 'rpg_systems_list', 'librarium', undefined, onDisplayRpgSystems);
 PAGE('system', 'System', 'rpg_system', 'librarium');
+PAGE('allSystems', 'Systeme', 'rpg_systems_list', 'aristocracy', undefined, onDisplayRpgSystems);
 
 ROUTER
   .on('systems', ()=>PAGE._RENDER(loadPageData, PAGE.systems))
+  .on('allSystems', ()=>PAGE._RENDER(loadPageData, PAGE.allSystems))
   //.on('systems/:id', args=>PAGE._RENDER(nestWrap('rpgsystem', loadRpgSystem), PAGE.system, args));
   .on('systems/:id', args=>PAGE._RENDER(nestWrap('rpgsystem', loadRpgSystemWithTitles), PAGE.system, args));
 
+
 async function loadPageData() {
   let rpgsystems = await loadRpgSystems();
-  return {
-    tables: {
-      rpgsystems: createTable('systems', ['System', 'Kürzel'], rpgsystems, canEditSystems())
-    }
+  let table = {
+    editable: canEditSystems(),
+    class: 'systems',
+    header: ['System', 'Kürzel'],
   };
+  table.rows = rpgsystems.map((row) => ({
+      //TODO: variable identifier
+      id: row.id,
+      columns: Object.entries(row)
+        .filter(([k, v]) => k != 'id')
+        .map(([k, v]) => ({columnName: k, columnValue: v})),
+    }));
+  return { tables: { rpgsystems: table, } };
 }
 
 function canEditSystems() {

@@ -9,23 +9,6 @@ const rowButtonClass = 'rowbutton';
 const inputClass = 'value-form';
 const textClass = 'value-text';
 
-//TODO: this feels like OOP. Perhaps there is a more idiomatic way in JS.
-export function createTable(cls, header, data, editable) {
-  let table = {
-    editable: editable,
-    class: cls,
-    header: header,
-  };
-  table.rows = data.map((row) => ({
-      //TODO: variable identifier
-      id: row.id,
-      columns: Object.entries(row)
-        .filter(([k, v]) => k != 'id')
-        .map(([k, v]) => ({columnName: k, columnValue: v})),
-    }));
-  return table;
-}
-
 export function registerTableEvents({
     table,
     canEdit = () => true, 
@@ -34,6 +17,7 @@ export function registerTableEvents({
     onRowClick = () => {},
 }) {
   table.querySelectorAll(`tr[${rowIdAttribute}]`).forEach(row => {
+    console.debug('registering editing events')
     let editing = false;
     if (table.matches(`.${editableClass}`) && canEdit()) {
        let rowInputs = {};
@@ -79,7 +63,12 @@ export function registerTableEvents({
           let rowId = Number(row.getAttribute(rowIdAttribute));
           let values = {};
           Object.entries(rowInputs).forEach(([k, input]) => {
+            if (input.matches('select,input[type=number]')) {
+              values[k] = Number(input.value || 0);
+            } else {
+              // TODO: breaks non-nullable parameters
               values[k] = input.value !== '' ? input.value : null;
+            }
           });
           onRowUpdate(rowId, values)
             .then(response => {
@@ -88,8 +77,12 @@ export function registerTableEvents({
                 value.textContent = newValue;
               });
               Object.entries(rowInputs).forEach(([k, input]) => {
-                let newValue = response[k] !== null ? response[k] : '';
-                input.setAttribute('value', newValue)
+                if (input.matches('select')) {
+                  input.value = `${response[k]}`;
+                } else {
+                  let newValue = response[k] !== null ? response[k] : '';
+                  input.setAttribute('value', newValue)
+                }
               });
               abortEditing();
             }).catch(err => {

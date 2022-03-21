@@ -4,7 +4,8 @@
     {{#header}}
       <th>{{.}}</th>
     {{/header}}
-    {{#editable}}<th class="menucol"/>{{/editable}}
+    {{#editable}}
+      <th class="menucol"/>{{/editable}}
   </tr>
   </thead>
   <tbody>
@@ -12,8 +13,24 @@
     <tr data-rowId="{{id}}">
       {{#columns}}
         <td>
-          <span class="value-text" data-name="{{columnName}}">{{columnValue}}</span>
-          {{#editable}}<input class="value-form" name="{{columnName}}" type="text" value="{{columnValue}}"/>{{/editable}}
+          <span class="value-text {{#columnTitle}}dotted{{/columnTitle}}" data-name="{{columnName}}" {{#columnTitle}}
+                title="{{columnTitle}}"{{/columnTitle}}>
+            {{columnValue}}
+          </span>
+          {{#editable}}
+            {{#columnOptions.length}}
+              <select class="value-form" id="{{columnName}}" name="{{columnName}}">
+                {{#columnOptions}}
+                  <option value="{{id}}">{{#tag}}[{{.}}] {{/tag}}{{text}}</option>
+                {{/columnOptions}}
+              </select>
+            {{/columnOptions.length}}
+            {{^columnOptions.length}}
+              <input class="value-form" name="{{columnName}}"
+                     type="{{#columnType}}{{.}}{{/columnType}}{{^columnType}}text{{/columnType}}"
+                     value="{{columnValue}}"/>
+            {{/columnOptions.length}}
+          {{/editable}}
         </td>
       {{/columns}}
       {{#editable}}

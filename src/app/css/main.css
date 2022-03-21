@@ -443,10 +443,11 @@ abbr.sysShortnameInline::after {
   content: ']';
 }
 
-table.systems tr[data-rpgsystemid] {
+table.systems tr[data-rowId]:not(.editing) {
   cursor: pointer;
 }
-table.titles .shortname {
+
+table.titles .dotted {
   text-decoration: underline dotted var(--color-cd-dark-green);
 }
 
