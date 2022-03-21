@@ -1,6 +1,6 @@
 import {API,PAGE,ROUTER,checkScope,nestWrap} from './base.js';
 import {loadTitles} from './titles.js';
-import {registerEditEvents,createTable} from './table.js';
+import {registerTableEvents,createTable} from './table.js';
 
 PAGE('systems', 'Systeme', 'rpg_systems_list', 'librarium', undefined, onDisplayRpgSystems);
 PAGE('system', 'System', 'rpg_system', 'librarium');
@@ -26,21 +26,13 @@ function canEditSystems() {
 function onDisplayRpgSystems(pageNode) {
   let systemsTable = pageNode.querySelector('table.systems');
   if (systemsTable) {
-    registerEditEvents({
+    registerTableEvents({
       table: systemsTable,
       canEdit: canEditSystems,
-      onUpdate: updateRpgSystem,
+      onRowUpdate: updateRpgSystem,
+      onRowClick: (rowId) => ROUTER.navigate('systems/' + encodeURIComponent(rowId)),
     });
 
-    systemsTable.querySelectorAll('tr[data-rowId]').forEach(row => {
-      row.addEventListener('click', event => {
-//        if(editing || event.target.matches('a,button,select,input')){ return; }
-        if(event.target.matches('a,button,select,input')){ return; }
-        event.preventDefault()
-        let systemid = row.getAttribute('data-rowId');
-        ROUTER.navigate('systems/' + encodeURIComponent(systemid));
-      });
-    });
   };
 }
 

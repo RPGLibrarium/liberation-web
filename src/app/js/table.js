@@ -26,15 +26,16 @@ export function createTable(cls, header, data, editable) {
   return table;
 }
 
-export function registerEditEvents({
+export function registerTableEvents({
     table,
     canEdit = () => true, 
-    onDelete = () => {},
-    onUpdate = () => {},
+    onRowDelete = () => {},
+    onRowUpdate = (rowId, values) => {},
+    onRowClick = () => {},
 }) {
-  if (table.matches(`.${editableClass}`) && canEdit()) {
+  table.querySelectorAll(`tr[${rowIdAttribute}]`).forEach(row => {
     let editing = false;
-    table.querySelectorAll(`tr[${rowIdAttribute}]`).forEach(row => {
+    if (table.matches(`.${editableClass}`) && canEdit()) {
        let rowInputs = {};
        row.querySelectorAll(`input:not([type=submit]).${inputClass}, select.${inputClass}`)
          .forEach(el => rowInputs[el.name] = el);
@@ -49,7 +50,6 @@ export function registerEditEvents({
          Object.values(rowInputs).forEach(input => input.value = input.getAttribute('value'));
        };
 
-
       row.querySelector(`.${rowButtonClass}[value=edit]`)
         .addEventListener('click', event => {
           event.preventDefault();
@@ -58,11 +58,12 @@ export function registerEditEvents({
           editing = true
           row.classList.add('editing')
         });
+
       row.querySelector(`.${rowButtonClass}[value=delete]`)
         .addEventListener('click', event => {
           event.preventDefault();
           event.stopPropagation();
-          onDelete()
+          onRowDelete()
           // TODO: delete Row from view
             .catch(err => {
               console.error('deleting row failed', err);
@@ -70,6 +71,7 @@ export function registerEditEvents({
               alert('Fehler');
             });
         });
+
       row.querySelector(`.${rowButtonClass}[value=save]`)
         .addEventListener('click', event => {
           event.preventDefault();
@@ -79,8 +81,7 @@ export function registerEditEvents({
           Object.entries(rowInputs).forEach(([k, input]) => {
               values[k] = input.value !== '' ? input.value : null;
           });
-          console.debug(values);
-          onUpdate(rowId, values)
+          onRowUpdate(rowId, values)
             .then(response => {
               Object.entries(rowValues).forEach(([k, value]) => {
                 let newValue = response[k] !== null ? response[k] : '';
@@ -97,12 +98,21 @@ export function registerEditEvents({
               alert('Fehler');
             });
         });
+
       row.querySelector(`.${rowButtonClass}[value=abort]`)
         .addEventListener('click', event => {
           event.preventDefault();
           event.stopPropagation();
           abortEditing();
         });
-    }); // for each
-  }; // if
+    }; // if
+
+    row.addEventListener('click', event => {
+      if(editing || event.target.matches('a,button,select,input')){ return; }
+      event.preventDefault();
+      event.stopPropagation();
+      let rowId = row.getAttribute(`${rowIdAttribute}`);
+      onRowClick(rowId);
+    });
+  }); // for each
 } // function
