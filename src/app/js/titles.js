@@ -1,6 +1,7 @@
-import {API,PAGE,ROUTER,checkScope} from './base.js';
+import {API,PAGE,ROUTER} from './base.js';
 import {loadRpgSystems} from './rpgsystems.js';
 import {registerTableEvents} from './table.js';
+import {checkScope} from './keycloak.js';
 
 PAGE('titles', 'Titel', 'titles_list', 'librarium', undefined, onDisplayTitles);
 PAGE('allTitles', 'Alle Titel', 'titles_list', 'aristocracy', onDisplayTitles);

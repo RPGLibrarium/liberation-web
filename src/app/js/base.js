@@ -1,22 +1,18 @@
 import * as DIALOGUES from './dialogues.js';
+import {checkScope, KEYCLOAK} from './keycloak.js';
+import {CONFIG} from './init.js';
 
 const WHOOSH_DURATION = 1000;
 const execAfter = setTimeout;
+export const WEB_ROOT_PATH = '..';
 
 // ###########################
 // "(SEMI) GLOBAL" VARS INIT #
 // ###########################
 
 // some variables are used across several sections, so we should declare them on top ...
-let CONFIG = null;
 let PAGES = {};
 const ALL_PAGES = [];
-export let keycloak = null;
-const STORAGE_KEY_KC_TOKEN = 'lastKcToken';
-const STORAGE_KEY_KC_ID_TOKEN = 'lastKcIdToken';
-const STORAGE_KEY_KC_REFRESH_TOKEN = 'lastKcRefreshToken';
-const STORAGE = window.localStorage;
-
 
 // #####
 // API #
@@ -40,8 +36,8 @@ export const API = args => {
   }
 
   let auth = undefined;
-  if (keycloak && keycloak.authenticated){
-    auth = `Bearer ${keycloak.token}`;
+  if (KEYCLOAK && KEYCLOAK.authenticated){
+    auth = `Bearer ${KEYCLOAK.token}`;
   }
   const defaultParams = {
     method: 'GET',
@@ -96,25 +92,22 @@ API.post = (url, args=undefined) => API({ url, method: 'POST', ...(args||{}) });
 API.put = (url, args=undefined) => API({ url, method: 'PUT', ...(args||{}) });
 API.delete = (url, args=undefined) => API({ url, method: 'DELETE', ...(args||{}) });
 
-
-// ########
-// CONFIG #
-// ########
-const WEB_ROOT_PATH = '..';
-const CONFIG_LOCATION = 'config.json';
-let _configPromise = API.get(`${WEB_ROOT_PATH}/${CONFIG_LOCATION}`)
-  .then(r=>r.json())
-  .then(data => CONFIG = data)
-  .catch(e => {
-    console.error('loading config failed! ', e);
-    return Promise.reject('error loading config');
-  });
-
-
 // #######
 // PAGES #
 // #######
 export const TEMPLATES = {};
+
+export function loadTemplates(templateNames) {
+  const loadTpl = name => API.get(new URL(`templates/${name}.mustache`, location.href))
+    .then(r => r.text())
+    .then(data => {
+      TEMPLATES[name] = data;
+      Mustache.parse(TEMPLATES[name]);
+    });
+  return Promise.all(templateNames.map(loadTpl))
+    .catch(err => console.error('something went wrong (fetching templates)', err));
+}
+
 export const PAGE = (page, title, template, nav=undefined, conditional=undefined, onDisplay=undefined)=>{
   if(PAGES[page]) return;
   conditional = conditional || (()=>true);
@@ -137,8 +130,8 @@ export const PAGE = (page, title, template, nav=undefined, conditional=undefined
 PAGES = PAGE;
 let NAV_ACTIVE = 'librarium'; //Sane default value, is overwritten later on
 PAGES._CONDITIONALS = {
-  onAuthenticated: ()=>keycloak && keycloak.authenticated,
-  onNotAuthenticated: ()=> keycloak && !keycloak.authenticated,
+  onAuthenticated: ()=>KEYCLOAK && KEYCLOAK.authenticated,
+  onNotAuthenticated: ()=> KEYCLOAK && !KEYCLOAK.authenticated,
   onAristocrat: ()=>checkScope('aristocrat:books:read')||checkScope('aristocrat:books:read'),
   onDev: ()=>checkRoles('developer'),
   onLibrarian: ()=>checkRoles('librarian'),
@@ -162,136 +155,6 @@ ROUTER.notFound(()=>{
   // TODO: show a good 404 page!
 });
 
-// ######
-// AUTH #
-// ######
-// const KC_CONF_LOCATION = '../keycloak.json';
-const KC_REFRESH_INTERVAL = 5; // seconds -> how often it is checked
-const KC_REFRESH_THRESHOLD = 10; // seconds -> remaining time which causes refresh
-
-let keycloakUpdateInterval = null;
-
-function loadKeycloak(waitForStuff, thenDoStuff) {
-  console.debug("Loading keycloak")
-  document.querySelector(':root').classList.add('loading');
-  if(typeof Keycloak === 'undefined' || !Keycloak){
-    API.get(new URL(`${WEB_ROOT_PATH}/${CONFIG.keycloakConfigLocation}`, location.href))
-      .then(res => res.data)
-      .then(conf => {
-        let scriptLocation = `${conf['auth-server-url']}/js/keycloak.js`;
-        let scriptNode = document.createElement('script');
-        scriptNode.addEventListener('error', errorEvt => {
-          console.error('error loading keycloak script', errorEvt)
-          initWithoutKeycloak(waitForStuff, thenDoStuff);
-        });
-        scriptNode.addEventListener('load', loadEvt => {
-          console.debug('keycloak script loaded!');
-          initKeycloak(conf, waitForStuff, thenDoStuff);
-        });
-        scriptNode.src = scriptLocation;
-        scriptNode.async = true;
-        document.querySelector('head').appendChild(scriptNode);
-      })
-      .catch(e => {
-        console.error('Fetching Keycloak configuration failed!', e);
-      })
-  }
-}
-
-function initKeycloak(config, waitForStuff, thenDoStuff){
-  if(!keycloak){
-    console.debug("Init keycloak")
-    // TODO the following seems to be easier than passing the conf object o_O ... we should be able to reuse it!
-    //keycloak = new Keycloak(`${WEB_ROOT_PATH}/${CONFIG.keycloakConfigLocation}`);
-    keycloak = new Keycloak({
-      url: config['auth-server-url'],
-      clientId: config.resource,
-      ...config,
-    });
-  }
-
-  let initFromCache = {};
-  if (STORAGE) {
-    let _addIfExists = (initKey, storageKey) => {
-      const val = STORAGE.getItem(storageKey) ?? undefined;
-      if (val !== undefined) initFromCache[initKey] = val;
-    };
-    _addIfExists('token', STORAGE_KEY_KC_TOKEN);
-    _addIfExists('idToken', STORAGE_KEY_KC_ID_TOKEN);
-    _addIfExists('refreshToken', STORAGE_KEY_KC_REFRESH_TOKEN);
-  }
-
-  keycloak.init({
-    ...initFromCache,
-    onLoad: 'check-sso',
-    silentCheckSsoRedirectUri: new URL('./silent-check-sso.html', location.href).toString(),
-    silentCheckSsoFallback: true,
-  })
-  .then(() => {
-    waitForStuff.then(thenDoStuff);
-    updateKeycloakState();
-  })
-  .catch(err => {
-    console.error('failed initialising keycloak', err);
-    initWithoutKeycloak(waitForStuff, thenDoStuff);
-  })
-}
-
-function initWithoutKeycloak(waitForStuff, thenDoStuff){
-  waitForStuff.then(thenDoStuff);
-}
-
-function updateKeycloakState(){
-  if(keycloak && keycloak.authenticated && keycloakUpdateInterval === null){
-    keycloakUpdateInterval = setInterval(refreshToken, KC_REFRESH_INTERVAL * 1000)
-    if (STORAGE) {
-      STORAGE.setItem(STORAGE_KEY_KC_TOKEN, keycloak.token);
-      STORAGE.setItem(STORAGE_KEY_KC_ID_TOKEN, keycloak.idToken);
-      STORAGE.setItem(STORAGE_KEY_KC_REFRESH_TOKEN, keycloak.refreshToken);
-    }
-  } else if(!(keycloak && keycloak.authenticated) && keycloakUpdateInterval !== null){
-    console.warn('not logged in anymore ...');
-    clearInterval(keycloakUpdateInterval);
-    keycloakUpdateInterval = null;
-  }
-}
-
-function refreshToken() {
-  if(!keycloak) return console.warn("Keycloak, not set");
-  keycloak.updateToken(KC_REFRESH_THRESHOLD)
-    .then(refreshed => {
-      if(refreshed){
-        console.debug('keycloak token refreshed');
-        updateKeycloakState();
-      }
-    })
-    .catch(err => {
-        console.err('refreshing token failed:', err);
-        updateKeycloakState();
-    });
-}
-
-export function login() {
-    keycloak.login({scope: 'account:modify aristocrat:accounts:modify aristocrat:accounts:read aristocrat:books:modify aristocrat:books:read aristocrat:guilds:modify librarian:rpgsystems:modify librarian:titles:modify'});
-}
-
-export function logout() {
-    if (STORAGE) {
-      STORAGE.removeItem(STORAGE_KEY_KC_TOKEN);
-      STORAGE.removeItem(STORAGE_KEY_KC_ID_TOKEN);
-      STORAGE.removeItem(STORAGE_KEY_KC_REFRESH_TOKEN);
-    }
-    keycloak.logout();
-}
-
-function checkRoles(role) {
-  return keycloak && keycloak.authenticated && keycloak.tokenParsed.roles && (keycloak.tokenParsed.roles.includes(role) || keycloak.tokenParsed.roles.includes('admin'));
-}
-
-export function checkScope(scope) {
-  return keycloak && keycloak.authenticated && keycloak.tokenParsed.scope.split(' ').includes(scope);
-}
-
 // #####################
 // UI VOODOO FUNCTIONS #
 // #####################
@@ -304,7 +167,7 @@ function renderPage(loadData, page, args={}) {
   // query data
   loadData(args, true).then(data => {
     data = {
-      _AUTHENTICATED: (keycloak || {}).authenticated || false,
+      _AUTHENTICATED: (KEYCLOAK || {}).authenticated || false,
       ...data,
     };
     // render data to template
@@ -367,7 +230,6 @@ function updateNavBar() {
 // #####################
 export const MAGIC = (waitForStuff, thenDoStuff)=>{
   DIALOGUES.init(document.querySelector('#dialogues'), {TEMPLATES, renderTemplate: Mustache.render});
-  _configPromise.then(()=>loadKeycloak(waitForStuff, thenDoStuff));
 };
 
 

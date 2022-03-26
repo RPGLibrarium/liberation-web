@@ -1,6 +1,7 @@
-import {API,PAGE,ROUTER,checkScope,nestWrap} from './base.js';
+import {API,PAGE,ROUTER,nestWrap} from './base.js';
 import {loadTitles} from './titles.js';
 import {registerTableEvents} from './table.js';
+import {checkScope} from './keycloak.js';
 
 PAGE('systems', 'Systeme', 'rpg_systems_list', 'librarium', undefined, onDisplayRpgSystems);
 PAGE('system', 'System', 'rpg_system', 'librarium');

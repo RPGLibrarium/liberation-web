@@ -1,4 +1,5 @@
-import {API,PAGE,ROUTER,keycloak} from './base.js';
+import {API,PAGE,ROUTER} from './base.js';
+import {KEYCLOAK} from './keycloak.js';
 
 PAGE('profile', 'Mein Profil', 'profile_details', -2, PAGE._CONDITIONALS.onAuthenticated);
 
