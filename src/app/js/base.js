@@ -1,3 +1,5 @@
+import * as DIALOGUES from './dialogues.js';
+
 const WHOOSH_DURATION = 1000;
 const execAfter = setTimeout;
 
@@ -364,6 +366,7 @@ function updateNavBar() {
 // GENREAL MAGIC STUFF #
 // #####################
 export const MAGIC = (waitForStuff, thenDoStuff)=>{
+  DIALOGUES.init(document.querySelector('#dialogues'), {TEMPLATES, renderTemplate: Mustache.render});
   _configPromise.then(()=>loadKeycloak(waitForStuff, thenDoStuff));
 };
 
