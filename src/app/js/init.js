@@ -1,5 +1,6 @@
-import {loadTemplates, API, ROUTER} from './base.js';
+import {loadTemplates, API, TEMPLATES, ROUTER} from './base.js';
 import {initKeycloak} from './keycloak.js';
+import * as DIALOGUES from './dialogues.js';
 
 // ########
 // CONFIG #

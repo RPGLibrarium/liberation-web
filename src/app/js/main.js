@@ -5,12 +5,14 @@ import {logout, login, KEYCLOAK} from './keycloak.js';
 import './librarium.js';
 import './rpgsystems.js';
 import './accounts.js';
-import './guilds.js';
-import './titles.js';
+import './aristocracy.js';
 import './books.js';
 import './collection.js';
-import './aristocracy.js';
+import './guilds.js';
+import './librarium.js';
 import './profile.js';
+import './rpgsystems.js';
+import './titles.js';
 
 // useful for debugging
 window.keycloak = () => KEYCLOAK;

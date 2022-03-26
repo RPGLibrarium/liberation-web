@@ -1,4 +1,3 @@
-import * as DIALOGUES from './dialogues.js';
 import {checkScope, KEYCLOAK} from './keycloak.js';
 import {CONFIG} from './init.js';
 
@@ -223,15 +222,6 @@ function updateNavBar() {
   });
   document.querySelector('nav.topnav').outerHTML = newHtml;
 }
-
-
-// #####################
-// GENREAL MAGIC STUFF #
-// #####################
-export const MAGIC = (waitForStuff, thenDoStuff)=>{
-  DIALOGUES.init(document.querySelector('#dialogues'), {TEMPLATES, renderTemplate: Mustache.render});
-};
-
 
 // ###################
 // UTILITY FUNCTIONS #
