@@ -210,11 +210,13 @@ function initKeycloak(config, waitForStuff, thenDoStuff){
 
   let initFromCache = {};
   if (STORAGE) {
-    initFromCache = {
-      token: STORAGE.getItem(STORAGE_KEY_KC_TOKEN) || undefined,
-      idToken: STORAGE.getItem(STORAGE_KEY_KC_ID_TOKEN) || undefined,
-      refreshToken: STORAGE.getItem(STORAGE_KEY_KC_REFRESH_TOKEN) || undefined,
+    let _addIfExists = (initKey, storageKey) => {
+      const val = STORAGE.getItem(storageKey) ?? undefined;
+      if (val !== undefined) initFromCache[initKey] = val;
     };
+    _addIfExists('token', STORAGE_KEY_KC_TOKEN);
+    _addIfExists('idToken', STORAGE_KEY_KC_ID_TOKEN);
+    _addIfExists('refreshToken', STORAGE_KEY_KC_REFRESH_TOKEN);
   }
 
   keycloak.init({
@@ -255,13 +257,13 @@ function updateKeycloakState(){
 function refreshToken() {
   if(!keycloak) return console.warn("Keycloak, not set");
   keycloak.updateToken(KC_REFRESH_THRESHOLD)
-    .success(refreshed => {
+    .then(refreshed => {
       if(refreshed){
         console.debug('keycloak token refreshed');
         updateKeycloakState();
       }
     })
-    .error(err => {
+    .catch(err => {
         console.err('refreshing token failed:', err);
         updateKeycloakState();
     });
