@@ -366,7 +366,10 @@ function updateNavBar() {
 // GENREAL MAGIC STUFF #
 // #####################
 export const MAGIC = (waitForStuff, thenDoStuff)=>{
-  DIALOGUES.init(document.querySelector('#dialogues'), {TEMPLATES, renderTemplate: Mustache.render});
+  //DIALOGUES.init(document.querySelector('#dialogues'), {TEMPLATES, renderTemplate: Mustache.render});
+  waitForStuff = waitForStuff.then(()=>{
+    //DIALOGUES.addTemplateDialogue('test').show();
+  });
   _configPromise.then(()=>loadKeycloak(waitForStuff, thenDoStuff));
 };
 

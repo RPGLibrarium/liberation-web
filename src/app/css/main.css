@@ -406,6 +406,48 @@ footer .footer-right {
   /* 90% {transform: rotate(+1747.5deg);} */
 }
 
+#dialogues {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9420;
+}
+#dialogues > .dialogue {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.42);
+  display: grid;
+  grid-template-rows: minmax(1em, 50%) max-content 1fr minmax(1em, 50%);
+  grid-template-columns: minmax(1em, 50%) 1fr minmax(1em, 50%);
+}
+#dialogues > .dialogue .dialogueHead {
+  grid-column: 2;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+#dialogues > .dialogue .dialogueHead .title {
+  grid-column: 1;
+}
+#dialogues > .dialogue .dialogueHead .close {
+  grid-column: 2;
+}
+#dialogues > .dialogue .dialogueContent {
+  grid-column: 2;
+  grid-row: 3;
+  display: block;
+  min-width: 21em;
+  min-height: 7em;
+  padding: 0.42em;
+  background: var(--color-cd-light-ish);
+}
+
 /* SPECIFI CONTENT */
 ul.linkBoxList {
   display: flex;
