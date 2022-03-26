@@ -15,11 +15,11 @@ function loadMyAccountInfo() {
 }
 
 function loadProfileData() {
-  if(!(keycloak && keycloak.authenticated)) return Promise.resolve({
+  if(!(KEYCLOAK && KEYCLOAK.authenticated)) return Promise.resolve({
     authenticated: false,
   });
   loadMyAccountInfo().then(d => console.debug("/me", d));
-  const token = keycloak.tokenParsed;
+  const token = KEYCLOAK.tokenParsed;
   return Promise.resolve({
     authenticated: true,
     uid: token.sub,
